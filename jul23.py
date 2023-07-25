@@ -6,6 +6,13 @@ from tensorflow.keras.models import load_model
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, RTCConfiguration
 import av
 from collections import deque
+import logging 
+
+st_webrtc_logger = logging.getLogger("streamlit_webrtc")
+st_webrtc_logger.setLevel(logging.WARNING)
+
+aioice_logger = logging.getLogger("aioice")
+aioice_logger.setLevel(logging.WARNING)
 
 mp_drawing = mp.solutions.drawing_utils
 mp_holistic = mp.solutions.holistic
@@ -76,7 +83,7 @@ class VideoProcessor(VideoProcessorBase):
         )
         self.sentence_queue = deque(maxlen=6)
 
-    async def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+    def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
         image = frame.to_ndarray(format="bgr24")
 
         image, results = mediapipe_detection(image, self.holistic)
